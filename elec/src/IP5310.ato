@@ -1,0 +1,40 @@
+component IP5310:
+    # component IP5310
+    footprint = "QFN-32_L5.0-W5.0-P0.50-BL-EP3.4"
+    lcsc_id = "C191176"
+    mpn = "C191176"
+    # pins
+    signal L2 ~ pin 1
+    signal L3 ~ pin 2
+    signal VSET ~ pin 3
+    signal VTHS ~ pin 4
+    signal RSET ~ pin 5
+    signal NTC ~ pin 6
+    signal AGND ~ pin 7
+    signal KEY ~ pin 8
+    signal BAT ~ pin 9
+    signal VBUS ~ pin 10
+    signal VBUSG ~ pin 11
+    signal CC1 ~ pin 12
+    signal CC2 ~ pin 13
+    signal LX ~ pin 14
+    LX ~ pin 15
+    LX ~ pin 16
+    LX ~ pin 17
+    LX ~ pin 18
+    signal VOUT ~ pin 19
+    VOUT ~ pin 20
+    VOUT ~ pin 21
+    VOUT ~ pin 22
+    signal VIN ~ pin 23
+    VIN ~ pin 24
+    signal DMC ~ pin 25
+    signal DPC ~ pin 26
+    signal DMA ~ pin 27
+    signal DPA ~ pin 28
+    signal DMB ~ pin 29
+    signal DPB ~ pin 30
+    signal LIGHT ~ pin 31
+    signal L1 ~ pin 32
+    signal EP ~ pin 33
+

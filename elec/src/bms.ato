@@ -1,0 +1,63 @@
+from "generics/interfaces.ato" import Power, USB2
+from "generics/capacitors.ato" import Capacitor
+from "generics/resistors.ato" import Resistor
+from "usb-connectors/usb-connectors.ato" import USBCConn_NoRes
+
+module Bms:
+  power_usb = new Power
+  power_bat = new Power
+  ic = new IP5310
+  usbc = new USBCConn_NoRes
+
+  signal AGND ~ ic.AGND; AGND ~ power_bat.gnd
+  power_bat.gnd ~ power_usb.gnd
+  power_usb.vcc ~ ic.VBUS; power_usb.gnd ~ ic.EP;
+
+  power_usb ~ usbc.power
+  C_usbc1 = new Capacitor; C_usbc1.value = 10uF +/- 20%; C_usbc1.package = "0603"
+  C_usbc1.power ~ power_usb
+  C_usbc2 = new Capacitor; C_usbc2.value = 10uF +/- 20%; C_usbc2.package = "0603"
+  C_usbc2.power ~ power_usb
+
+  usbc.conn.CC1 ~ ic.CC1
+  usbc.conn.CC2 ~ ic.CC2
+
+component IP5310:
+    # component IP5310
+    footprint = "QFN-32_L5.0-W5.0-P0.50-BL-EP3.4"
+    lcsc_id = "C191176"
+    mpn = "C191176"
+    # pins
+    signal L2 ~ pin 1
+    signal L3 ~ pin 2
+    signal VSET ~ pin 3
+    signal VTHS ~ pin 4
+    signal RSET ~ pin 5
+    signal NTC ~ pin 6
+    signal AGND ~ pin 7
+    signal KEY ~ pin 8
+    signal BAT ~ pin 9
+    signal VBUS ~ pin 10
+    signal VBUSG ~ pin 11
+    signal CC1 ~ pin 12
+    signal CC2 ~ pin 13
+    signal LX ~ pin 14
+    LX ~ pin 15
+    LX ~ pin 16
+    LX ~ pin 17
+    LX ~ pin 18
+    signal VOUT ~ pin 19
+    VOUT ~ pin 20
+    VOUT ~ pin 21
+    VOUT ~ pin 22
+    signal VIN ~ pin 23
+    VIN ~ pin 24
+    signal DMC ~ pin 25
+    signal DPC ~ pin 26
+    signal DMA ~ pin 27
+    signal DPA ~ pin 28
+    signal DMB ~ pin 29
+    signal DPB ~ pin 30
+    signal LIGHT ~ pin 31
+    signal L1 ~ pin 32
+    signal EP ~ pin 33
