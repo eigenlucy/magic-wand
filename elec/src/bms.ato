@@ -2,25 +2,75 @@ from "generics/interfaces.ato" import Power, USB2
 from "generics/capacitors.ato" import Capacitor
 from "generics/resistors.ato" import Resistor
 from "usb-connectors/usb-connectors.ato" import USBCConn_NoRes
+from "generics/leds.ato" import LEDIndicatorRed, LEDIndicatorGreen
+from "generics/inductors.ato" import Inductor
+from "IHLP5050FDER1R0M01.ato" import IHLP5050FDER1R0M01
+from "SDNT1005X104J4150HTF.ato" import SDNT1005X104J4150HTF
 
 module Bms:
-  power_usb = new Power
-  power_bat = new Power
+  # Components
   ic = new IP5310
   usbc = new USBCConn_NoRes
 
+  # POWER
+  power_usb = new Power
+  power_bat = new Power
+  power_vout = new Power
+  power_10v = new Power
   signal AGND ~ ic.AGND; AGND ~ power_bat.gnd
-  power_bat.gnd ~ power_usb.gnd
-  power_usb.vcc ~ ic.VBUS; power_usb.gnd ~ ic.EP;
+  power_bat.gnd ~ power_usb.gnd; power_bat.gnd ~ power_vout.gnd
+  power_usb.vcc ~ ic.VBUS; power_usb.gnd ~ ic.EP
 
+  # USB-C INPUT
   power_usb ~ usbc.power
   C_usbc1 = new Capacitor; C_usbc1.value = 10uF +/- 20%; C_usbc1.package = "0603"
   C_usbc1.power ~ power_usb
   C_usbc2 = new Capacitor; C_usbc2.value = 10uF +/- 20%; C_usbc2.package = "0603"
   C_usbc2.power ~ power_usb
-
-  usbc.conn.CC1 ~ ic.CC1
+  usbc.conn.CC1 ~ ic.CC1 #IP5310 includes charge configuration interface for current negotiation
   usbc.conn.CC2 ~ ic.CC2
+
+  # DC-DC Power Stage
+  L_bms = new Inductor; L_bms -> IHLP5050FDER1R0M01
+  L_bms.p1 ~ ic.LX; signal BATTERY ~ L_bms.p2 #BMS DC-DC Switching Inductor
+  C_bat1 = new Capacitor; C_bat1.value = 22uF +/- 20%; C_bat1.package = "0603"
+  C_bat1.p1 ~ ic.BAT; C_bat1.p2 ~ power_bat.gnd
+  C_bat2 = new Capacitor; C_bat2.value = 22uF +/- 20%; C_bat2.package = "0603"
+  C_bat2.p1 ~ BATTERY; C_bat2.p2 ~ power_bat.gnd
+  R_jumper = new Resistor; R_jumper.value = 0ohm +/- 200mohm; R_jumper.package = "1206"
+  R_jumper.p1 ~ C_bat1.p1; R_jumper.p2 ~ C_bat2.p2
+
+  # 5V DC OUT (power_vout) DECOUPLING
+  ic.VOUT ~ power_vout.vcc
+  C_vout1 = new Capacitor; C_vout1.value = 22uF +/- 20%; C_vout1.package = "0603"
+  power_vout ~ C_vout1.power
+  C_vout2 = new Capacitor; C_vout2.value = 22uF +/- 20%; C_vout2.package = "0603"
+  power_vout ~ C_vout2.power
+  C_vout3 = new Capacitor; C_vout3.value = 22uF +/- 20%; C_vout3.package = "0603"
+  power_vout ~ C_vout3.power;
+  C_vout4 = new Capacitor; C_vout4.value = 22uF +/- 20%; C_vout4.package = "0603"
+  power_vout ~ C_vout4.power
+
+  # CHARGING INDICATOR LEDS
+  led1 = new LEDIndicatorRed
+  led1.input ~ ic.L1; LED1.gnd ~ IC.l3 # 25% CHARGE
+  led2 = new LEDIndicatorRed
+  led2.input ~ ic.L3; led2.gnd ~ ic.L1 # 50% charge
+  led3 = new LEDIndicatorRed
+  led3.input ~ ic.L2; led3.gnd ~ ic.L3 # 75% charge
+  led4 = new LEDIndicatorGreen
+  led4.input ~ ic.L3; led4.gnd ~ ic.L2 # 100% CHARGE
+
+  # NTC CONFIGURATION
+  # for no NTC place a 52k resistor between ic.NTC
+  # Vntc = 20uA*(R_ntc * Rntc)
+  # VHT = 0.43V / 0.49V, at Vntc = 0.49 (50C) charging will stop, at Vntc = 0.43 (55C) output will shut off
+  # VMT = 0.56V, at Vntc = 0.56V (45C) charging current will be halved
+  # VLT = 1.32V / 1.44V, at Vntc = 1.32V (0C) charging will stop, at Vntc = 1.44V (-10C) output will shut off
+  R_ntc = new Resistor; R_ntc.value = 82kohm +/- 5%; R_ntc.package = "0402"
+  ntc = new SDNT1005X104J4150HTF # beta ~= 4150K
+  signal NTC ~ ic.NTC; NTC ~ ntc.p1
+  R_ntc.p1 ~ ntc.p1; R_ntc.p2 ~ ntc.p2; R_ntc.p2 ~ power_bat.gnd
 
 component IP5310:
     # component IP5310
@@ -30,7 +80,7 @@ component IP5310:
     # pins
     signal L2 ~ pin 1
     signal L3 ~ pin 2
-    signal VSET ~ pin 3
+    signal VSET ~ pin 3 # Floating sets battery voltage to 4.2V
     signal VTHS ~ pin 4
     signal RSET ~ pin 5
     signal NTC ~ pin 6

@@ -1,0 +1,9 @@
+component IHLP5050FDER1R0M01:
+    # component IHLP5050FDER1R0M01
+    footprint = "IND-SMD_L13.2-W12.9"
+    lcsc_id = "C14561"
+    mpn = "C14561"
+    # pins
+    signal p2 ~ pin 2
+    signal p1 ~ pin 1
+

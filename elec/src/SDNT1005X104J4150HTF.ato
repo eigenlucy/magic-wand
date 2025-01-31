@@ -1,0 +1,9 @@
+component SDNT1005X104J4150HTF:
+    # component SDNT1005X104J4150HTF
+    footprint = "R0402"
+    lcsc_id = "C279909"
+    mpn = "C279909"
+    # pins
+    signal p2 ~ pin 2
+    signal p1 ~ pin 1
+
