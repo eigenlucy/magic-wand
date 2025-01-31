@@ -53,7 +53,7 @@ module Bms:
 
   # CHARGING INDICATOR LEDS
   led1 = new LEDIndicatorRed
-  led1.input ~ ic.L1; led1.gnd ~ IC.l3 # 25% CHARGE
+  led1.input ~ ic.L1; led1.gnd ~ ic.L3 # 25% CHARGE
   led2 = new LEDIndicatorRed
   led2.input ~ ic.L3; led2.gnd ~ ic.L1 # 50% charge
   led3 = new LEDIndicatorRed

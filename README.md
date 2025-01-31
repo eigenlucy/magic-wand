@@ -1,6 +1,11 @@
 # magic-wand
 <a href="https://eigenlucy.github.io/projects/magic-wand">Battery pack for wireless Hitachi Magic Wand operation.</a>
 
+# Features
+<li>3A USB-C rapid charging</li>
+<li> [Capacity] mAh battery provides [hours] of  use</li>
+<li>Plugs directly into the back of a Hitachi Wand/Hitachi Wand Plus</li>
+
 # Dependencies
 <li><a href="https://docs.atopile.io/latest/">atopile</a></li>
 <li><a href="https://www.kicad.org/">KiCAD</a></li>
